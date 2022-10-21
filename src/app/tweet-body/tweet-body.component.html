@@ -1,0 +1,169 @@
+<app-tweet-header></app-tweet-header>
+<section class="vh-50" style="margin-top: 1%">
+    <div style="background-color: #DBEAFE">
+        <div class="container py-5 h-50">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col col-xl-10">
+                    <div class="card" style="border-radius: 1rem;">
+                        <div class="row g-0">
+                            <div class="col-md-6 col-lg-7 d-flex align-items-center">
+                                <div class="card-body p-4 p-lg-5 text-black">
+                                    <div class="row">
+                                        <div class="col-sm-10">
+<h3>
+    <fa-icon [icon]="profileIcon" size="2x"></fa-icon>
+    <button (click)="onProfileClick(username)"
+    class="btn-outline-secondary">Welcome @{{username}}</button>
+</h3><br><br>
+<div>
+    <textarea style="width: 100%; height: 5rem;" placeholder="What's happening?" [(ngModel)]="addTweetMessage"
+        (input)="onchangeTweet();checkTweet()" [mention]="items" maxlength="144"></textarea>
+</div>
+
+<div *ngIf="invalidAddTweet">
+    <div class="error align-left">Length must be below 144 characters</div>
+</div>
+
+
+<div>
+    <button style="margin-top: 1%; margin-left: 90%;" [disabled]="disableButton" class="btn btn-success" type="button"
+        (click)="addTweet()"> Add Tweet </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<ng-container *ngFor="let tweet of tweets">
+    <section class="vh-50" style="margin-top: 1%">
+        <div style="background-color: #DBEAFE">
+            
+            <div class="container py-5 h-100">
+                
+                <div class="row d-flex justify-content-center align-items-center h-100">
+                    
+                    <div class="col col-xl-10">
+                        <ul class="list-inline col-md-3 justify-content-end">
+                            <li class="list-inline-item"><fa-icon [icon]="editIcon" *ngIf="username == tweet.userName" size="1x"
+                            [styles]="{'margin':'5px','background':'transparent'}"
+                            (click)="updateTweetClick(tweet)" class="pull-right"></fa-icon></li>
+                            <li class="list-inline-item"><fa-icon [icon]="deleteIcon" *ngIf="username == tweet.userName"
+                            [styles]="{'margin':'5px','color':'red'}" (click)="deleteTweetClick()" size="1x"></fa-icon>
+                            </li>
+                            <li class="list-inline-item">
+                            <span class="text-right text-sm-start">
+                                ({{tweet.createdDate}})
+                            </span></li></ul>
+                        <div class="card" style="border-radius: 1rem;">
+                            <div class="row g-0">
+                                <div class="col-md-6 col-lg-7 d-flex align-items-center">
+                                    <div class="card-body p-4 p-lg-5 text-black">
+                                        <div class="row">
+                                            <div class="col-sm-10">
+                                                <div *ngIf="deleteBool">
+                                                    <p>please confirm if you want to delete this Tweet</p>
+                                                    <div>
+                                                    <button class="btn btn-success btn-sm" (click)="deleteTweet(tweet)">YES DELETE</button>
+                                                    <button class="btn btn-danger btn-sm" (click)="deleteTweetClick()">NO</button><br><br>
+                                                </div>
+                                                </div>
+                                                <fa-icon [icon]="profileIcon" size="2x"></fa-icon>
+                                                <button (click)="onProfileClick(tweet.userName)"
+                                                    class="btn-outline-secondary"><b>  @{{tweet.userName}}</b></button>
+                                                <br>
+                                                <div *ngIf="!editBool">
+                                                    <blockquote class="blockquote">
+                                                    
+                                                    <p>  {{tweet.tweet}}</p></blockquote><br>
+                                                    </div>
+                                                    <div *ngIf="editBool">
+                                                        <textarea style="width: 100%; height: 5rem;" placeholder="{{tweet.tweet}}" [(ngModel)]="addTweetMessage" value="addTweetMessage"
+                                                         (input)="onchangeTweet();checkTweet()" [mention]="items" maxlength="144"></textarea>
+                                                    
+                                                    <div *ngIf="invalidAddTweet">
+                                                        <div class="error align-left">Length must be below 144 characters</div>
+                                                    </div>
+                                                    
+                                                    
+                                                    <div>
+                                                        <button style="margin-top: 1%; margin-left: 90%;" [disabled]="disableButton" class="btn btn-success" type="button"
+                                                            (click)="updateTweet(tweet)"> Edit Tweet </button>
+                                                    </div>
+                                                </div>
+                                                <table class="table table-borderless">        
+                                                <tr class="mx-auto text-left">
+                                                            <td style="width:1px; white-space:nowrap;">
+                                                                <div *ngIf="tweet.canLike">
+                                                                    <b><button (click)="onLikeClick(tweet)"
+                                                                            class="btn btn-link">like</button> :
+                                                                        {{tweet.likeCount}} </b>
+                                                                </div>
+                                                                <div *ngIf="!tweet.canLike">
+                                                                    <b><button [disabled]="true"
+                                                                        class="btn btn-link">likes : {{tweet.likeCount}}</button></b>
+                                                                </div>
+                                                                
+                                                            </td>
+                                                            <td style="width:1px; white-space:nowrap;">
+                                                                <button (click)="onReplyClick(tweet)"
+                                                                    class="btn btn-link">replies :
+                                                                    {{tweet.replyCount}}</button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr class="mx-auto text-sm-start">
+                                                            <td style="width:1px; white-space:nowrap;">
+                                                                <div *ngIf="tweet.replyBool">
+                                                                    <ng-container *ngFor="let r of tweet.reply">
+                                                        <tr class="mx-auto text-left">
+                                                            <td style="width:1px; white-space:nowrap;">
+                                                                <fa-icon [icon]="profileIcon"></fa-icon>
+                                                                <button (click)="onProfileClick(r.userName)"
+                                                    class="btn-outline-secondary">
+                                                                <b>  @{{r.userName}} : </b></button></td>
+                                                            <td style="width:1px; white-space:nowrap;"><p class="text-sm-start text-end"> ({{r.replyDate}})</p></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="width:1px; white-space:nowrap;"><blockquote class="blockquote"><p>{{r.reply}}</p></blockquote></td>
+                                                        </tr>
+                                                                    </ng-container>
+                                                                    <br>
+                                                                    <br>
+                                                                    <fa-icon [icon]="profileIcon"></fa-icon>
+                                                                    <button (click)="onProfileClick(username)"
+                                                                        class="btn-outline-secondary"><b> {{username}} </b></button>
+                                                                    <div>
+                                                                        <textarea style="width: 100%; height: 5rem;" placeholder="Want to share your thoughts on this Tweet?" [(ngModel)]="addTweetMessage"
+                                                                            (input)="onchangeTweet();checkTweet()" [mention]="items" maxlength="144"></textarea>
+                                                                    </div>
+                                                                    
+                                                                    <div *ngIf="invalidAddTweet">
+                                                                        <div class="error align-left">Length must be below 144 characters</div>
+                                                                    </div>
+                                                                    
+                                                                    
+                                                                    <div>
+                                                                        <button style="margin-top: 1%; margin-left: 90%;" [disabled]="disableButton" class="btn btn-success" type="button"
+                                                                            (click)="addReply(tweet)"> Add Reply </button>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</ng-container>
