@@ -67,6 +67,7 @@ export class LoginComponent implements OnInit {
         this.error = null;
         if(localStorage.getItem('role')=='user'){
         this.router.navigate(['./tweet']);
+        this.toastr.success("Logged in");
       }
       else{
         this.router.navigate(['./']);
@@ -75,6 +76,7 @@ export class LoginComponent implements OnInit {
       (errorMessage) => {
         this.isValidating = false;
         this.error = errorMessage;
+        this.toastr.error("Failed");
       }
     );
   }
@@ -101,10 +103,12 @@ export class LoginComponent implements OnInit {
         this.login( userName, password );
         this.isValidating = false;
         this.error = null;
+        this.toastr.success("Password updated");
       },
       (errorMessage) => {
         this.isValidating = false;
         this.error = errorMessage;
+        this.toastr.error("Failed");
       });
     }else{
       this.isValidating = false;
@@ -129,10 +133,12 @@ export class LoginComponent implements OnInit {
         this.login( userName, password );
         this.isValidating = false;
         this.error = null;
+        this.toastr.success("Registered Successfully");
       },
       (errorMessage) => {
         this.isValidating = false;
         this.error = errorMessage;
+        this.toastr.error("Failed use different Username")
       });
     }else{
       this.isValidating = false;

@@ -1,6 +1,7 @@
 import { Component, OnChanges, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { faComment, faCommentDots, faCommenting, faHeart, faPenToSquare, faReply, faTrash, faUser } from '@fortawesome/free-solid-svg-icons';
+import { ToastrService } from 'ngx-toastr';
 import { TweetsService } from '../services/tweets.service';
 
 interface Tweet{
@@ -44,7 +45,7 @@ export class TweetProfileComponent implements OnInit,OnChanges {
   userName:any=localStorage.getItem('tempUserName');
   username:any=localStorage.getItem('username');
   user:any;
-  constructor(private route:Router,private tweetservice:TweetsService) { }
+  constructor(private route:Router,private tweetservice:TweetsService,private toastr:ToastrService) { }
 
   ngOnInit(): void {
     if(this.userName==null){
@@ -61,16 +62,18 @@ export class TweetProfileComponent implements OnInit,OnChanges {
   getUserProfile(){
     this.tweetservice.getUserByUserName(this.userName).subscribe((data)=>{
       this.user=data;
-      console.log(this.user);
-    })
+      this.toastr.success("Loaded profile");
+    },error=>{
+    this.toastr.error("Failed to load profile")});
   }
 
   getTweetsByUserName(){
     this.tweetservice.getAllTweetsByUser(this.userName).subscribe((data)=>{
       this.tweets=data;
       this.manipulate();
-      console.log(this.tweets);
-    })
+      this.toastr.success("Loaded tweets")
+    },error=>{
+      this.toastr.error("Failed to load Tweets")});
   }
 
   onEditClick(){
@@ -82,7 +85,9 @@ export class TweetProfileComponent implements OnInit,OnChanges {
     this.tweetservice.editUserProfile(user).subscribe((data)=>{
       this.user=data;
       this.editProfileBool=false;
-    })
+      this.toastr.success("Edited successfully");
+    },error=>{
+      this.toastr.error("Failed to edit Your Details")});
   }
 
   onReplyClick(tweet:any){
@@ -97,8 +102,10 @@ export class TweetProfileComponent implements OnInit,OnChanges {
     this.tweetservice.likeTweet(id).subscribe((data)=>{
       this.tweets=data;
       this.manipulate();
+      this.toastr.success("Liked successfully");
     },
-    error=>{console.log(error)});
+    error=>{console.log(error)
+    this.toastr.error("Faield to like")});
   }
 
   addTweet(){
@@ -108,8 +115,10 @@ export class TweetProfileComponent implements OnInit,OnChanges {
       this.tweets=data;
       this.manipulate();
       this.addTweetMessage=null;
+      this.toastr.success("Successfully posted Tweet");
     },
-    error=>{console.log(error)});
+    error=>{this.addTweetMessage=null;console.log(error)
+    this.toastr.error("Failed to post Tweet")});
   }
 
   addReply(t:Tweet){
@@ -120,13 +129,18 @@ export class TweetProfileComponent implements OnInit,OnChanges {
       this.tweets=data;
       this.manipulate();
       this.addTweetMessage=null;
+      this.toastr.success("Successfully replied Tweet");
     },
-    error=>{console.log(error)});
+    error=>{this.addTweetMessage=null;console.log(error)
+    this.toastr.error("Failed to reply");});
   }
 
   updateTweetClick(t:Tweet){
     this.editBool=!this.editBool;
     this.addTweetMessage=t.tweet;
+    if(!this.editBool){
+      this.addTweetMessage=null;
+    }
   }
 
   updateTweet(t:Tweet){
@@ -135,9 +149,12 @@ export class TweetProfileComponent implements OnInit,OnChanges {
     this.checkTweet();
     this.tweetservice.updateTweet({tId,tweet}).subscribe((data)=>{
       this.tweets=data;
+      this.addTweetMessage=null;
       this.manipulate()
+      this.toastr.success("Edited Successfully");
     },
-    error=>{console.log(error)});
+    error=>{this.addTweetMessage=null;console.log(error);
+    this.toastr.error("Failed to edit")});
   }
   deleteTweetClick(){
     this.deleteBool=!this.deleteBool;
@@ -147,9 +164,11 @@ export class TweetProfileComponent implements OnInit,OnChanges {
     let tId=t.tId;
     this.tweetservice.deleteTweet(tId).subscribe((data)=>{
       this.tweets=data;
-      this.manipulate()
+      this.manipulate();
+      this.toastr.success("Deleted Tweet");
     },
-    error=>{console.log(error)});
+    error=>{console.log(error)
+    this.toastr.error("Failed to delete Tweet");});
   }
 
   onProfileClick(username:string){

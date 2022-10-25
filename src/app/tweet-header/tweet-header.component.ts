@@ -39,6 +39,7 @@ export class TweetHeaderComponent implements OnInit {
   onSearch(f:NgForm){
     this.tweetservice.getUserByUserName(f.value.userName).subscribe((data)=>{
       localStorage.setItem('tempUserName',f.value.userName);
+      this.ngOnInit();
       this.route.navigate(['./profile']);
     })
   }

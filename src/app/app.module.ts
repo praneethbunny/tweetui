@@ -24,6 +24,7 @@ import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinne
 import { TweetHeaderComponent } from './tweet-header/tweet-header.component';
 import { TweetBodyComponent } from './tweet-body/tweet-body.component';
 import { TweetProfileComponent } from './tweet-profile/tweet-profile.component';
+import { TrendingComponent } from './trending/trending.component';
 
 
 
@@ -35,7 +36,8 @@ import { TweetProfileComponent } from './tweet-profile/tweet-profile.component';
     LoadingSpinnerComponent,
     TweetHeaderComponent,
     TweetBodyComponent,
-    TweetProfileComponent
+    TweetProfileComponent,
+    TrendingComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +48,12 @@ import { TweetProfileComponent } from './tweet-profile/tweet-profile.component';
     HttpClientModule,
     FontAwesomeModule,
     MatAutocompleteModule,
-    ToastrModule.forRoot(), 
+    ToastrModule.forRoot({
+      timeOut:1000,
+      progressBar:true,
+      progressAnimation: 'increasing',
+      preventDuplicates:true
+    }), 
     MentionModule,
     MatCheckboxModule,
     MatFormFieldModule,

@@ -100,6 +100,13 @@ export class TweetsService {
     return this.http.post<Tweet[]>('http://localhost:8083/api/v1.0/tweets/'+username+'/reply/'+id,inputFields,{headers})
   }
 
+  trending(){
+    let username=localStorage.getItem('username');
+    let  tokens:string='Bearer '+localStorage.getItem('token');
+    const headers=new HttpHeaders().set('Authorization',tokens);
+    return this.http.get<Tweet[]>('http://localhost:8083/api/v1.0/tweets/trending',{headers})
+  }
+
 
   
 

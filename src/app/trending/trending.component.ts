@@ -4,20 +4,6 @@ import { faComment, faCommentDots, faCommenting, faHeart, faPenToSquare, faReply
 import { ToastrService } from 'ngx-toastr';
 import { TweetsService } from '../services/tweets.service';
 
-interface UserDAO{
-  userName:string;
-  firstName:string;
-  lastName:string;
-  emailId:string;
-  contactNo:String;
-}
-
-interface TweetReply{
-  reply:string;
-	userName:string;
-	replyDate:string;
-}
-
 interface Tweet{
   tId:string;
   tweet:string;
@@ -27,29 +13,23 @@ interface Tweet{
   likes:string[];
 }
 
-interface TweetDAO{
-  tId:string;
-  tweet:string;
-  userName:string;
-  createdDate:string;
-  reply:TweetReply[];
-  likes:string[];
-  likeCount:number;
+interface TweetReply{
+  reply:string;
+	userName:string;
+	replyDate:string;
 }
 
 @Component({
-  selector: 'app-tweet-body',
-  templateUrl: './tweet-body.component.html',
-  styleUrls: ['./tweet-body.component.css']
+  selector: 'app-trending',
+  templateUrl: './trending.component.html',
+  styleUrls: ['./trending.component.css']
 })
-export class TweetBodyComponent implements OnInit , OnChanges{
+export class TrendingComponent implements OnInit,OnChanges {
+
   tweets: any;
   tweetDao:any;
   tweetsDao:any;
-  users: UserDAO[]|null=null;
-  replys:TweetReply[]|null=null;
   canLike:boolean=true;
-  username:any=localStorage.getItem('username');
   addTweetMessage:any;
   invalidAddTweet:boolean=false;
   disableButton: boolean = true;
@@ -61,53 +41,45 @@ export class TweetBodyComponent implements OnInit , OnChanges{
   profileIcon = faUser;
   editBool=false;
   deleteBool=false;
-  constructor(private route:Router, private tweetservice:TweetsService,private toastr:ToastrService) { }
+  editProfileBool=false;
+  userName:any=localStorage.getItem('tempUserName');
+  username:any=localStorage.getItem('username');
+  user:any;
+  constructor(private route:Router,private tweetservice:TweetsService,private toastr:ToastrService) { }
 
   ngOnInit(): void {
-    this.getAllTweets();
-  }
-  ngOnChanges():void{
-    if(!this.editBool){
-      this.addTweetMessage="";
+    if(this.userName==null){
+      this.userName=localStorage.getItem('username');
     }
+    this.getTrendingTweets();
   }
 
-  getAllTweets(){
-    this.tweetservice.getAllTweets().subscribe((data)=>{
+  ngOnChanges(): void{
+    this.ngOnInit();
+  }
+
+
+  getTrendingTweets(){
+    this.tweetservice.trending().subscribe((data)=>{
       this.tweets=data;
       this.manipulate();
-      this.toastr.success("Successfully loaded");
-    },
-    error=>{console.log(error);
-      this.toastr.error("failed");});
+      this.toastr.success("Loaded tweets")
+    },error=>{
+      this.toastr.error("Failed to load Tweets")});
   }
 
-  manipulate(){
-    this.editBool=false;
-    this.deleteBool=false;
-    for(let i=0;i<this.tweets.length;i++){
-      this.tweets[i].replyBool=false;
-      this.tweets[i].canLike=true;
-      this.tweets[i].canEdit=false;
-        this.tweets[i].canDelete=false;
-      this.tweets[i].likeCount=this.tweets[i].likes.length;
-      this.tweets[i].replyCount=this.tweets[i].reply.length;
-      this.tweets[i].createdDate=this.tweets[i].createdDate.substring(0,16);
-        if(this.tweets[i].userName.trim()==this.username?.trim()){
-        this.tweets[i].canLike=false;
-        this.tweets[i].canEdit=true;
-        this.tweets[i].canDelete=true;
-        }
-        for(let j=0;j<this.tweets[i].reply.length;j++){
-        this.tweets[i].reply[j].replyDate=this.tweets[i].reply[j].replyDate.substring(0,16);
-        }
-        for(let k=0;k<this.tweets[i].likes.length;k++){
-          if(this.tweets[i].likes[k].trim()==this.username?.trim())
-          this.tweets[i].canLike=false;
-        }
-    }
-    this.tweets.reverse;
-    console.log(this.tweets)
+  onEditClick(){
+    this.editProfileBool=!this.editProfileBool;
+  }
+
+  onEdit(user:any){
+    console.log(user);
+    this.tweetservice.editUserProfile(user).subscribe((data)=>{
+      this.user=data;
+      this.editProfileBool=false;
+      this.toastr.success("Edited successfully");
+    },error=>{
+      this.toastr.error("Failed to edit Your Details")});
   }
 
   onReplyClick(tweet:any){
@@ -122,10 +94,10 @@ export class TweetBodyComponent implements OnInit , OnChanges{
     this.tweetservice.likeTweet(id).subscribe((data)=>{
       this.tweets=data;
       this.manipulate();
-      this.toastr.success("You liked tweet");
+      this.toastr.success("Liked successfully");
     },
     error=>{console.log(error)
-    this.toastr.error("Failed to like tweet")});
+    this.toastr.error("Faield to like")});
   }
 
   addTweet(){
@@ -135,11 +107,10 @@ export class TweetBodyComponent implements OnInit , OnChanges{
       this.tweets=data;
       this.manipulate();
       this.addTweetMessage=null;
-      this.toastr.success('You added a new Tweet');
+      this.toastr.success("Successfully posted Tweet");
     },
-    error=>{this.addTweetMessage=null;console.log(error);
-      this.toastr.error("Failed to add tweet");});
-
+    error=>{this.addTweetMessage=null;console.log(error)
+    this.toastr.error("Failed to post Tweet")});
   }
 
   addReply(t:Tweet){
@@ -150,10 +121,10 @@ export class TweetBodyComponent implements OnInit , OnChanges{
       this.tweets=data;
       this.manipulate();
       this.addTweetMessage=null;
-      this.toastr.success("You replied to the Tweet");
+      this.toastr.success("Successfully replied Tweet");
     },
-    error=>{console.log(error)
-    this.toastr.error("failed to reply")});
+    error=>{this.addTweetMessage=null;console.log(error)
+    this.toastr.error("Failed to reply");});
   }
 
   updateTweetClick(t:Tweet){
@@ -169,12 +140,12 @@ export class TweetBodyComponent implements OnInit , OnChanges{
     let tweet=this.addTweetMessage;
     this.checkTweet();
     this.tweetservice.updateTweet({tId,tweet}).subscribe((data)=>{
-      this.addTweetMessage=null;
       this.tweets=data;
-      this.manipulate();
-      this.toastr.success("You edited your tweet")
+      this.addTweetMessage=null;
+      this.manipulate()
+      this.toastr.success("Edited Successfully");
     },
-    error=>{this.addTweetMessage=null;console.log(error)
+    error=>{this.addTweetMessage=null;console.log(error);
     this.toastr.error("Failed to edit")});
   }
   deleteTweetClick(){
@@ -186,10 +157,10 @@ export class TweetBodyComponent implements OnInit , OnChanges{
     this.tweetservice.deleteTweet(tId).subscribe((data)=>{
       this.tweets=data;
       this.manipulate();
-      this.toastr.success("You deleted your Tweet");
+      this.toastr.success("Deleted Tweet");
     },
     error=>{console.log(error)
-    this.toastr.error("Failed to delete")});
+    this.toastr.error("Failed to delete Tweet");});
   }
 
   onProfileClick(username:string){
@@ -216,4 +187,34 @@ export class TweetBodyComponent implements OnInit , OnChanges{
   }
 
 
+
+  manipulate(){
+    this.editBool=false;
+    this.deleteBool=false;
+    for(let i=0;i<this.tweets.length;i++){
+      this.tweets[i].replyBool=false;
+      this.tweets[i].canLike=true;
+      this.tweets[i].canEdit=false;
+        this.tweets[i].canDelete=false;
+      this.tweets[i].likeCount=this.tweets[i].likes.length;
+      this.tweets[i].replyCount=this.tweets[i].reply.length;
+      this.tweets[i].createdDate=this.tweets[i].createdDate.substring(0,16);
+        if(this.tweets[i].userName.trim()==this.username?.trim()){
+        this.tweets[i].canLike=false;
+        this.tweets[i].canEdit=true;
+        this.tweets[i].canDelete=true;
+        }
+        for(let j=0;j<this.tweets[i].reply.length;j++){
+        this.tweets[i].reply[j].replyDate=this.tweets[i].reply[j].replyDate.substring(0,16);
+        }
+        for(let k=0;k<this.tweets[i].likes.length;k++){
+          if(this.tweets[i].likes[k].trim()==this.username?.trim())
+          this.tweets[i].canLike=false;
+        }
+    }
+    console.log(this.tweets)
+  }
+
+
 }
+
