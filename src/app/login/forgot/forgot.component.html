@@ -1,0 +1,44 @@
+<div class="forgot-main border-0 scroll-attr scrollbar-primary" [style.max-height.px]="maxHeight">
+    <div id="forgotWrapper" mat-dialog-content>
+        <form #forgotForm='ngForm' name="forgotForm">
+            <h2>Forgot Password</h2>
+
+            <label>Username*:</label>
+            <div>
+                <input type="text" name="userName" #userName="ngModel" [(ngModel)]="inputFormValues.username" required>
+            </div>
+            <div [hidden]="userName.valid || userName.pristine">
+                <p class="alert alert-danger">Field is Required</p>
+            </div>
+
+            <label>Password*:</label>
+            <div>
+                <input type="password" (input)="checkPassWord()" name="passWord" #passWord="ngModel" [(ngModel)]="inputFormValues.password"
+                    required>
+            </div>
+            <div [hidden]="passWord.valid || passWord.pristine">
+                <p class="alert alert-danger">Field is Required</p>
+            </div>
+
+            <label>Confirm Password*:</label>
+            <div>
+                <input type="password" (input)="checkPassWord()" name="confirmPassWord" #confirmPassWord="ngModel"
+                    [(ngModel)]="inputFormValues.confirmPassWord" required>
+            </div>
+            <div *ngIf="confirmPassWord.touched">
+                <!-- <p class="alert alert-danger" *ngIf="confirmPassWord.errors?.required">Field is Required</p> -->
+                <p class="alert alert-danger" *ngIf="flagForPassWord">PassWord and ConfirmPassWord Must be Same!</p>
+            </div>
+
+            <div>
+                <button [disabled]="!forgotForm.form.valid" type="button" class="btn btn-success button"
+                    (click)="changePassWord()">
+                    Change Password </button>
+            </div>
+            <div>
+                <button class="btn" class="btn btn-primary button" type="button" (click)="cancel()"> Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
