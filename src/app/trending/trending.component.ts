@@ -92,9 +92,8 @@ export class TrendingComponent implements OnInit,OnChanges {
   onLikeClick(tweet:any){
     let id=tweet.tId;
     this.tweetservice.likeTweet(id).subscribe((data)=>{
-      this.tweets=data;
-      this.manipulate();
       this.toastr.success("Liked successfully");
+      this.ngOnInit();
     },
     error=>{console.log(error)
     this.toastr.error("Faield to like")});
@@ -118,10 +117,8 @@ export class TrendingComponent implements OnInit,OnChanges {
     let id=t.tId
     this.checkTweet();
     this.tweetservice.replyTweet(id,{reply}).subscribe((data)=>{
-      this.tweets=data;
-      this.manipulate();
-      this.addTweetMessage=null;
       this.toastr.success("Successfully replied Tweet");
+      this.ngOnInit();
     },
     error=>{this.addTweetMessage=null;console.log(error)
     this.toastr.error("Failed to reply");});
@@ -140,10 +137,8 @@ export class TrendingComponent implements OnInit,OnChanges {
     let tweet=this.addTweetMessage;
     this.checkTweet();
     this.tweetservice.updateTweet({tId,tweet}).subscribe((data)=>{
-      this.tweets=data;
-      this.addTweetMessage=null;
-      this.manipulate()
       this.toastr.success("Edited Successfully");
+      this.ngOnInit();
     },
     error=>{this.addTweetMessage=null;console.log(error);
     this.toastr.error("Failed to edit")});
@@ -155,9 +150,8 @@ export class TrendingComponent implements OnInit,OnChanges {
   deleteTweet(t:Tweet){
     let tId=t.tId;
     this.tweetservice.deleteTweet(tId).subscribe((data)=>{
-      this.tweets=data;
-      this.manipulate();
       this.toastr.success("Deleted Tweet");
+      this.ngOnInit();
     },
     error=>{console.log(error)
     this.toastr.error("Failed to delete Tweet");});

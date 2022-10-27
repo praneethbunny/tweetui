@@ -1,4 +1,5 @@
 <app-tweet-header></app-tweet-header>
+<div>
 <section class="vh-50" style="margin-top: 1%">
     <div style="background-color: #DBEAFE">
         <div class="container py-5 h-50">
@@ -170,6 +171,8 @@
                                                                     {{tweet.replyCount}}</button>
                                                             </td>
                                                         </tr>
+                                                        </table>
+                                                        <table class="table table-borderless">
                                                         <tr class="mx-auto text-sm-start">
                                                             <td style="width:1px; white-space:nowrap;">
                                                                 <div *ngIf="tweet.replyBool">
@@ -222,3 +225,4 @@
     </section>
     </div>
 </ng-container>
+</div>

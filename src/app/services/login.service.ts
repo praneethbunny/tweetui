@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Subject, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { User } from './user.model';
+import { environment } from 'src/environments/environment.prod';
+import { HttpHeaders } from '@angular/common/http';
 
 interface AuthResponse {
   username: string;
@@ -26,8 +28,9 @@ export class LoginService {
 
   login(inputFields: { username: string; password: string }) {
     console.log(inputFields);
+    const headers= new HttpHeaders()
     return this.http
-      .post<AuthResponse>('http://localhost:8081/api/v1.0/tweets/login',inputFields)
+      .post<AuthResponse>(environment.userAuthUrl+'login',inputFields,{'headers':headers})
       .pipe(
         catchError(this.handleError),
         tap((response) => {
@@ -45,20 +48,20 @@ export class LoginService {
 
   forgot(inputFields: { userName: string; password: string }) {
     return this.http
-      .post<AuthResponse>('http://localhost:8081/api/v1.0/tweets/'+inputFields.userName+'/forgot',inputFields);
+      .post<AuthResponse>(environment.userAuthUrl+inputFields.userName+'/forgot',inputFields);
 
   }
 
   register(inputFields: { userName: string; password: string; firstName: string; lastName: string;
     emailId: string; contactNo: string;  }){
       return this.http
-      .post<AuthResponse>('http://localhost:8081/api/v1.0/tweets/register',inputFields);
+      .post<AuthResponse>(environment.userAuthUrl+'register',inputFields);
 
   }
 
   getAllUsers(){
     return this.http
-      .get<any>('http://localhost:8081/api/v1.0/tweets/users/all');
+      .get<any>(environment.userAuthUrl+'users/all');
   }
 
   autoLogin() {

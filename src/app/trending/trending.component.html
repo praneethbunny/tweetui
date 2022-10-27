@@ -1,5 +1,4 @@
 <app-tweet-header></app-tweet-header>
-
 <ng-container *ngFor="let tweet of tweets">
     <section class="vh-50" style="margin-top: 1%">
         <div style="background-color: #DBEAFE">
@@ -90,6 +89,8 @@
                                                                 {{tweet.replyCount}}</button>
                                                         </td>
                                                     </tr>
+                                                    </table>
+                                                    <table class="table table-borderless">
                                                     <tr class="mx-auto text-sm-start">
                                                         <td style="width:1px; white-space:nowrap;">
                                                             <div *ngIf="tweet.replyBool">
